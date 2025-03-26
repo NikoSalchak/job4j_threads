@@ -6,11 +6,9 @@ public class ThreadState {
         Thread second = new Thread(() -> System.out.println(Thread.currentThread().getName()));
         first.start();
         second.start();
-        try {
-            first.join();
-            second.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        while (first.getState() != Thread.State.TERMINATED || second.getState() != Thread.State.TERMINATED) {
+            System.out.println(first.getState());
+            System.out.println(second.getState());
         }
         System.out.println("работа завершена");
     }
