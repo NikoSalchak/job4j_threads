@@ -23,24 +23,32 @@ public class Wget implements Runnable {
     public void run() {
         try (InputStream input = new URL(url).openStream();
              FileOutputStream output = new FileOutputStream(new File(new URI(url).getPath()).getName())) {
-            byte[] buffer = new byte[1024];
-            long sleepTime = 0;
+            byte[] buffer = new byte[speed];
             int bytesRead;
             int countRead = 0;
+            long sleepTime;
+            long startFileDownload = System.currentTimeMillis();
             long downloadAt = System.currentTimeMillis();
             while ((bytesRead = input.read(buffer, 0, buffer.length)) != -1) {
                 countRead += bytesRead;
                 output.write(buffer, 0, bytesRead);
                 if (countRead >= speed) {
                     long elapsed = System.currentTimeMillis() - downloadAt;
-                    System.out.println("скачено байтов: " + countRead + " время скачивания: " + elapsed);
+                    if (elapsed < 1000) {
+                        try {
+                            sleepTime = 1000 - elapsed;
+                            Thread.sleep(sleepTime);
+                            downloadAt = System.currentTimeMillis();
+                            System.out.println("скачано байтов: " + countRead + " время скачивания: " + sleepTime);
+                            countRead = 0;
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                 }
             }
-            try {
-                Thread.sleep(sleepTime);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            long endFileDownload = System.currentTimeMillis() - startFileDownload;
+            System.out.printf("скорость %s байт/с Время скачивания всего файла %s", speed, endFileDownload);
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
