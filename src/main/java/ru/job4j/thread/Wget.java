@@ -23,10 +23,10 @@ public class Wget implements Runnable {
     public void run() {
         try (InputStream input = new URL(url).openStream();
              FileOutputStream output = new FileOutputStream(new File(new URI(url).getPath()).getName())) {
-            byte[] buffer = new byte[speed];
+            byte[] buffer = new byte[1024];
             int bytesRead;
             int countRead = 0;
-            long sleepTime;
+            long sleepTime = 0;
             long startFileDownload = System.currentTimeMillis();
             long downloadAt = System.currentTimeMillis();
             while ((bytesRead = input.read(buffer, 0, buffer.length)) != -1) {
@@ -38,13 +38,13 @@ public class Wget implements Runnable {
                         try {
                             sleepTime = 1000 - elapsed;
                             Thread.sleep(sleepTime);
-                            downloadAt = System.currentTimeMillis();
-                            System.out.println("скачано байтов: " + countRead + " время скачивания: " + sleepTime);
-                            countRead = 0;
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
                     }
+                    downloadAt = System.currentTimeMillis();
+                    System.out.println("скачано байтов: " + countRead + " время скачивания: " + sleepTime);
+                    countRead = 0;
                 }
             }
             long endFileDownload = System.currentTimeMillis() - startFileDownload;
