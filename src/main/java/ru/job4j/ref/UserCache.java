@@ -18,10 +18,6 @@ public class UserCache {
     }
 
     public List<User> findAll() {
-        List<User> rsl = new ArrayList<>();
-        for (ConcurrentHashMap.Entry<Integer, User> entry : users.entrySet()) {
-            rsl.add(User.of(entry.getValue().getName()));
-        }
-        return rsl;
+        return new ArrayList<>(users.values());
     }
 }
