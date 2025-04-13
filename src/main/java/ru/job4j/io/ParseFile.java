@@ -11,10 +11,10 @@ public final class ParseFile {
     }
 
     public synchronized String getContentPredicate(Predicate<Integer> predicate) {
-        StringBuffer output = new StringBuffer();
+        StringBuilder output = new StringBuilder();
         try (InputStream input = new FileInputStream(file)) {
             int data;
-            while ((data = input.read()) > 0) {
+            while ((data = input.read()) != -1) {
                 if (predicate.test(data)) {
                     output.append((char) data);
                 }
