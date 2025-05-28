@@ -41,6 +41,10 @@ public class SimpleBlockingQueue<T> implements Iterable<T> {
         return value;
     }
 
+    public synchronized boolean isEmpty() {
+        return counter == 0;
+    }
+
     @Override
     public synchronized String toString() {
         return "SimpleBlockingQueue{" + queue + '}';
